@@ -1,9 +1,8 @@
-from sense_hat import SenseHat 
+from sense_hat import SenseHat
 from pygame.locals import *
 import pygame
-import time 
-import sys
-# this script demonstrates how to create a class stucture for gaming mode 
+import time
+# this script demonstates how to create a class structure for gaming mode
 sense = SenseHat()
 sense.clear()
 
@@ -14,25 +13,38 @@ class stack():
         self.gaming = True
 
     def startGame(self):
-        pygame.time.set_timer(USEREVENT +1, 800)
-        n = 0      
+        pygame.time.set_timer(USEREVENT +1, 400)
+        column = 0
+        row = 7
+        speed = 0.3
         while self.gaming:
             for event in pygame.event.get():
                 if event.type == KEYDOWN:
-                    sense.set_pixel(n, 7, (0, 0, 255))
-                    self.gaming = False
+                    sense.set_pixel(column, row, (0, 255, 255))
+                    if row == 7:
+                        stack_column = column
+                    else:
+                        if stack_column != column:
+                            sense.show_message("Game Over")
+                            self.gaming = False
+                    column = 0
+                    row -= 1
+                    if row == -1:
+                        sense.show_message("Winner")
+                        self.gaming = False
                 else:
-                    sense.set_pixel(n, 7, (0, 0, 255))
-                    time.sleep(0.3)
-                    sense.set_pixel(n, 7, (0, 0, 0))
-                    time.sleep(0.3)
-                    n +=1
-                    if n == 8:
-                        n = 0
+                    # turn on pixel and keep it on for 0.3 seconds
+                    sense.set_pixel(column, row, (0, 0, 255))
+                    time.sleep(speed)
+                    # turn off pixel and keep it off for 0.3 seconds
+                    sense.set_pixel(column,row,(0,0,0))
+                    column += 1
+                    if (column == 8):
+                        column = 0
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     try:
         game = stack()
         game.startGame()
     except KeyboardInterrupt:
-        sense.clear() 
+        sense.clear()
